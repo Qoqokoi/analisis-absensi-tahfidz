@@ -6,166 +6,197 @@ import plotly.graph_objects as go
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="Laporan Naratif Tahfidz TI 2022",
-    page_icon="🎓",
+    page_icon="📚",
     layout="wide"
 )
 
-# DATASET UTAMA
+# DATASET UTAMA (SESUAI NARRATIVE REPORT PDF)
 data = {
     "Semester": ["Semester 1", "Semester 3", "Semester 5", "Semester 7", "Semester 9"],
-    "Total": [51, 24, 29, 29, 8],
+    "Total Mahasiswa": [51, 24, 29, 29, 8],
     "Hadir": [46, 16, 2, 4, 1],
     "Tidak Hadir": [5, 8, 27, 25, 7],
     "% Hadir": [90.2, 66.7, 6.9, 13.8, 12.5],
-    "Status": ["Baik", "WARNING", "CRITICAL", "CRITICAL", "CRITICAL"]
+    "Status Performa": ["Baik", "WARNING", "CRITICAL", "CRITICAL", "CRITICAL"]
 }
 df = pd.DataFrame(data)
 
-# 2. HEADER & IDENTITAS KELOMPOK
-st.markdown("<h3 style='text-align: center;'>UNIVERSITAS DARUSSALAM GONTOR</h3>", unsafe_allow_html=True)
-st.markdown("<h4 style='text-align: center; color: gray;'>Fakultas Sains dan Teknologi | Program Studi Teknik Informatika</h4>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center;'>LAPORAN NARATIF ANALISIS KEHADIRAN TAHFIDZ</h1>", unsafe_allow_html=True)
-st.markdown("<h5 style='text-align: center;'>Mahasiswa TI Angkatan 2022 — Tahun Ajaran 2025/2026</h5>", unsafe_allow_html=True)
+# SKEMA WARNA DIAGRAM (SESUAI PDF KELOMPOK)
+COLOR_HADIR = "#00FF00"        # Hijau Terang (Hadir / AMAN)
+COLOR_TIDAK_HADIR = "#FF0000"  # Merah Terang (Tidak Hadir / KRITIS)
+COLOR_LINE = "#0000FF"         # Biru (% Kehadiran)
 
-st.write("**Disusun Oleh Kelompok:** Muhammad Hanan Annafi, Muhammad Raja Jibran, Akhogi Wafa, Sadam Husen, Muhammad Dafi al haq")
+# 2. HEADER & IDENTITAS KELOMPOK
+st.markdown("<h4 style='text-align: center; color: #1E88E5;'>UNIVERSITAS DARUSSALAM GONTOR</h4>", unsafe_allow_html=True)
+st.markdown("<h5 style='text-align: center; color: gray;'>Fakultas Sains dan Teknologi | Program Studi Teknik Informatika (2025/2026)</h5>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>LAPORAN NARATIF ANALISIS KEHADIRAN TAHFIDZ MAHASISWA TEKNIK INFORMATIKA 2022</h2>", unsafe_allow_html=True)
+st.markdown("**Disusun Oleh (Kelompok):** Muhammad Hanan Annafi, Muhammad Raja Jibran, Akhogi Wafa, Sadam Husen, Muhammad Dafi al haq")
+
 st.divider()
 
-# 3. RINGKASAN EKSEKUTIF & METRICS
+# 3. RINGKASAN EKSEKUTIF
 st.header("1. Ringkasan Eksekutif")
 st.info("""
-Analisis ini mengevaluasi data kehadiran program Tahfidz mahasiswa Teknik Informatika angkatan 2022. 
-Dari total 141 catatan kehadiran, hanya 69 kali (48.9%) mahasiswa hadir, sementara 72 kali (51.1%) tidak hadir. 
-Penurunan paling drastis terjadi pada Semester 5, dari 90.2% (Semester 1) menjadi 6.9%.
+Analisis ini mengevaluasi data kehadiran program Tahfidz mahasiswa Teknik Informatika angkatan 2022. Dari total 141 catatan kehadiran, hanya 69 kali (48.9%) mahasiswa hadir, sementara 72 kali (51.1%) tidak hadir. Penurunan paling drastis terjadi pada Semester 5, dari 90.2% (Semester 1) menjadi 6.9%. Temuan utama menunjukkan bahwa masalah bersifat sistemik, bukan sekadar penurunan komitmen individu, melainkan ketidakmampuan program mengakomodasi benturan jadwal magang dan kegiatan kampus mahasiswa senior.
+
+**Rekomendasi utama:** Transformasi digital (absensi online) dan fleksibilitas jadwal pendampingan merupakan langkah kritis untuk mengembalikan partisipasi mahasiswa senior.
 """)
 
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("Total Catatan", "141 Data")
+m1.metric("Total Catatan Kehadiran", "141 Data")
 m2.metric("Total Hadir", "69 (48.9%)")
 m3.metric("Total Tidak Hadir", "72 (51.1%)")
-m4.metric("Titik Nadir (Sem 5)", "6.9% Hadir")
+m4.metric("Nadir Semester 5", "6.9% Hadir")
 
 st.divider()
 
 # 4. PENDAHULUAN & METODOLOGI
-with st.expander("📌 2. Pendahuluan & 3. Metodologi (Klik untuk Membuka)", expanded=False):
-    st.write("### 2.1 Konteks Operasional")
-    st.write("Program Tahfidz merupakan instrumen strategis dalam membentuk karakter dan integritas akademik mahasiswa TI 2022. Pemantauan kehadiran mencerminkan tingkat student engagement dan komitmen terhadap standar mutu lulusan.")
+col_intro1, col_intro2 = st.columns(2)
+
+with col_intro1:
+    st.header("2. Pendahuluan")
+    st.subheader("2.1 Konteks Operasional")
+    st.write("Program Tahfidz merupakan instrumen strategis dalam membentuk karakter dan integritas akademik mahasiswa Teknik Informatika (TI) angkatan 2022. Dalam perspektif penjaminan mutu, pemantauan kehadiran bukan sekadar rutinitas administratif, melainkan indikator fundamental bagi keberhasilan internalisasi nilai-nilai program dan efektivitas investasi sumber daya institusi.")
     
-    st.write("### 3. Metodologi & Sumber Data")
-    st.write("Data dikumpulkan dari sistem pencatatan kehadiran program Tahfidz mahasiswa TI 2022 pada pertemuan ke-13 kelas A2, mencakup 5 kelompok semester (1, 3, 5, 7, dan 9). Pendekatan menggunakan 4 tingkat analisis (Deskriptif, Diagnostik, Prediktif, Preskriptif) dan 5 jenis visualisasi data.")
+    st.subheader("2.2 Tujuan Analisis")
+    st.markdown("""
+    1. Mendeskripsikan kondisi aktual kehadiran tahfidz per semester.
+    2. Mengidentifikasi akar penyebab penurunan kehadiran.
+    3. Memproyeksikan dampak jika tren dibiarkan.
+    4. Merumuskan rekomendasi strategis perbaikan program.
+    """)
+
+with col_intro2:
+    st.header("3. Metodologi")
+    st.subheader("3.1 Sumber Data & 3.2 Pendekatan Analisis")
+    st.write("Data dikumpulkan dari sistem pencatatan kehadiran program Tahfidz mahasiswa TI 2022 pada pertemuan ke-13 kelas A2 mencakup 5 kelompok semester (1, 3, 5, 7, dan 9) dengan total 141 catatan kehadiran.")
+    st.markdown("""
+    * **Analisis Deskriptif**: Evaluasi statistik kehadiran per semester.
+    * **Analisis Diagnostik**: Identifikasi faktor penyebab (hambatan struktural & psikologis).
+    * **Analisis Prediktif**: Proyeksi risiko berdasarkan tren penurunan.
+    * **Analisis Preskriptif**: Perumusan framework solusi berbasis data.
+    """)
+    
+    st.subheader("3.3 Visualisasi Data")
+    st.write("Mengintegrasikan 5 jenis visualisasi data pendukung (Bar Chart, Pie Chart, Line Chart, Stacked Bar Chart, dan Diagram Rata-rata/Combo).")
 
 st.divider()
 
-# 5. PAPARAN TEMUAN & TABEL DATA
-st.header("4. Paparan Temuan & Data Kehadiran")
+# 5. PAPARAN TEMUAN & TABEL 1
+st.header("4. Paparan Temuan")
+st.subheader("4.1 Analisis Deskriptif: Evaluasi Kritis Kinerja Kehadiran")
+st.write("Dalam evaluasi program pendidikan, stabilitas kehadiran adalah metrik utama keterlibatan mahasiswa. Penurunan angka kehadiran yang drastis merupakan sinyal kegagalan ekosistem pembelajaran dalam mengakomodasi dinamika peserta didik.")
 
-st.subheader("Table 1: Ringkasan Data Kehadiran Tahfidz")
+st.write("#### Tabel 1: Ringkasan Data Kehadiran Tahfidz")
 st.dataframe(df, use_container_width=True, hide_index=True)
 
-st.divider()
+st.caption("Penurunan kinerja dimulai jauh sebelum fase kritis (turun 23.5 poin persentase dari Sem 1 ke Sem 3). Titik keruntuhan (tipping point) terjadi pada Semester 5 di mana kehadiran jatuh hingga 6.9%. Secara agregat, partisipasi keseluruhan hanya menyentuh angka 48.9%.")
 
-# 6. 5 VISUALISASI DIAGRAM (100% SAMA DENGAN LAPORAN)
-st.header("📊 Visualisasi Data (5 Diagram Laporan)")
+# FIGURE 1 & FIGURE 2
+c_fig1, c_fig2 = st.columns(2)
 
-col1, col2 = st.columns(2)
-
-# Figure 1: Bar Chart
-with col1:
-    st.subheader("Figure 1: Kehadiran vs Ketidakhadiran")
+with c_fig1:
+    st.subheader("Figure 1: Kehadiran vs Ketidakhadiran per Semester")
     fig1 = go.Figure()
-    fig1.add_trace(go.Bar(x=df["Semester"], y=df["Hadir"], name="Hadir", marker_color="#1f77b4"))
-    fig1.add_trace(go.Bar(x=df["Semester"], y=df["Tidak Hadir"], name="Tidak Hadir", marker_color="#d62728"))
-    fig1.update_layout(barmode="group", yaxis_title="Jumlah Mahasiswa")
+    fig1.add_trace(go.Bar(x=df["Semester"], y=df["Hadir"], name="Hadir", marker_color=COLOR_HADIR))
+    fig1.add_trace(go.Bar(x=df["Semester"], y=df["Tidak Hadir"], name="Tidak Hadir", marker_color=COLOR_TIDAK_HADIR))
+    fig1.update_layout(barmode="group", yaxis_title="Jumlah Mahasiswa", title="Analisis Kehadiran Karantina Tahfidz TI 2022")
     st.plotly_chart(fig1, use_container_width=True)
 
-# Figure 2: Pie Chart
-with col2:
+with c_fig2:
     st.subheader("Figure 2: Distribusi Total Kehadiran")
     fig2 = px.pie(
-        names=["Hadir", "Tidak Hadir"],
-        values=[69, 72],
-        color_discrete_sequence=["#1f77b4", "#d62728"],
-        hole=0.3
+        names=["AMAN", "KRITIS"],
+        values=[16.7, 83.3],
+        color=["AMAN", "KRITIS"],
+        color_discrete_map={"AMAN": COLOR_HADIR, "KRITIS": COLOR_TIDAK_HADIR},
+        title="Distribusi Total Kehadiran"
     )
     st.plotly_chart(fig2, use_container_width=True)
 
-col3, col4 = st.columns(2)
+# FIGURE 3
+st.subheader("Figure 3: Tren Persentase Kehadiran")
+fig3 = px.line(
+    df, x="Semester", y="% Hadir", markers=True,
+    text=[f"{v}%" for v in df["% Hadir"]],
+    title="Tren Persentase Kehadiran Tahfidz"
+)
+fig3.update_traces(textposition="top center", line_color=COLOR_LINE, line_width=3)
+fig3.update_layout(yaxis_range=[0, 110], yaxis_title="Persentase Kehadiran (%)")
+st.plotly_chart(fig3, use_container_width=True)
 
-# Figure 3: Line Chart
-with col3:
-    st.subheader("Figure 3: Tren Persentase Kehadiran")
-    fig3 = px.line(
-        df, x="Semester", y="% Hadir", markers=True,
-        text=[f"{v}%" for v in df["% Hadir"]]
-    )
-    fig3.update_traces(textposition="top center", line_color="#1f77b4", line_width=3)
-    fig3.update_layout(yaxis_range=[0, 110], yaxis_title="Persentase Kehadiran (%)")
-    st.plotly_chart(fig3, use_container_width=True)
+st.divider()
 
-# Figure 4: Stacked Bar Chart
-with col4:
-    st.subheader("Figure 4: Komposisi Kehadiran (Stacked)")
+# 6. ANALISIS DIAGNOSTIK & FIGURE 4
+st.subheader("4.2 Analisis Diagnostik: Identifikasi Hambatan dan Disrupsi")
+
+col_diag1, col_diag2 = st.columns([1.2, 1])
+
+with col_diag1:
+    st.markdown("""
+    **A. Hambatan Struktural dan Operasional (Rigiditas Sistem)**
+    * **Benturan Profesional (Magang/KKP)**: Mahasiswa Semester 7 ke atas menghadapi kewajiban magang yang tidak fleksibel.
+    * **Disrupsi Geografis**: Lokasi magang yang jauh atau di luar kota menciptakan penghalang fisik total.
+    * **Beban Organisasi Mahasiswa Senior**: Semester 5 merupakan "tulang punggung" kepanitiaan kampus (PKKMB, Wisuda, Seminar).
+
+    **B. Hambatan Psikologis dan Prioritas Akademik**
+    * **Fokus Penyelesaian Studi**: Pada Semester 7 dan 9, perhatian terserap pada skripsi dan wisuda. Program tahfidz dianggap beban tambahan.
+    """)
+
+with col_diag2:
+    st.subheader("Figure 4: Komposisi Kehadiran per Semester")
     fig4 = go.Figure()
-    fig4.add_trace(go.Bar(x=df["Semester"], y=df["Hadir"], name="Hadir", marker_color="#1f77b4"))
-    fig4.add_trace(go.Bar(x=df["Semester"], y=df["Tidak Hadir"], name="Tidak Hadir", marker_color="#d62728"))
-    fig4.update_layout(barmode="stack", yaxis_title="Jumlah Mahasiswa")
+    fig4.add_trace(go.Bar(x=df["Semester"], y=df["Hadir"], name="Hadir", marker_color=COLOR_HADIR))
+    fig4.add_trace(go.Bar(x=df["Semester"], y=df["Tidak Hadir"], name="Tidak Hadir", marker_color=COLOR_TIDAK_HADIR))
+    fig4.update_layout(barmode="stack", yaxis_title="Jumlah Mahasiswa", title="Komposisi Kehadiran Per Semester")
     st.plotly_chart(fig4, use_container_width=True)
 
-# Figure 5: Bar Chart + Average Line
-st.subheader("Figure 5: Perbandingan Kehadiran dengan Rata-rata")
-fig5 = go.Figure()
-fig5.add_trace(go.Bar(x=df["Semester"], y=df["Hadir"], name="Hadir", marker_color="#1f77b4"))
-fig5.add_trace(go.Bar(x=df["Semester"], y=df["Tidak Hadir"], name="Tidak Hadir", marker_color="#d62728"))
-fig5.add_hline(
-    y=13.8, line_dash="dash", line_color="green",
-    annotation_text="Rata-rata Hadir (13.8)", annotation_position="top right"
-)
-fig5.update_layout(barmode="group", yaxis_title="Jumlah Mahasiswa")
-st.plotly_chart(fig5, use_container_width=True)
+st.divider()
+
+# 7. ANALISIS PREDIKTIF & FIGURE 5
+st.subheader("4.3 Analisis Prediktif & Figure 5: Diagram Kehadiran dengan Rata-rata")
+
+col_pred1, col_pred2 = st.columns([1, 1.2])
+
+with col_pred1:
+    st.markdown("""
+    1. **Inefisiensi dan Pemborosan Sumber Daya**: Pada Semester 5, ketidakhadiran mencapai 93%. Utilisasi nyata hanya 7% padahal anggaran Murobbi & fasilitas dialokasikan penuh.
+    2. **Erosi Kualitas dan Standar Lulusan**: Kehadiran di bawah 10% pada semester senior membuat target hafalan tidak tercapai.
+    3. **Proyeksi Kehadiran Masa Depan**: Kehadiran diprediksi terus berada di bawah 10% jika tanpa intervensi.
+    """)
+
+with col_pred2:
+    fig5 = go.Figure()
+    fig5.add_trace(go.Bar(x=df["Semester"], y=df["Hadir"], name="Hadir", marker_color=COLOR_HADIR, yaxis="y"))
+    fig5.add_trace(go.Bar(x=df["Semester"], y=df["Tidak Hadir"], name="Tidak Hadir", marker_color=COLOR_TIDAK_HADIR, yaxis="y"))
+    fig5.add_trace(go.Scatter(
+        x=df["Semester"], y=df["% Hadir"], name="% Kehadiran",
+        yaxis="y2", mode="lines+markers", line=dict(color=COLOR_LINE, width=3)
+    ))
+    fig5.update_layout(
+        title="Analisis Rata-Rata Kehadiran Karantina Tahfidz TI 2022",
+        yaxis=dict(title="Jumlah Mahasiswa"),
+        yaxis2=dict(title="% Kehadiran", overlaying="y", side="right", range=[0, 110]),
+        barmode="group"
+    )
+    st.plotly_chart(fig5, use_container_width=True)
 
 st.divider()
 
-# 7. ANALISIS 4 SUDUT PANDANG
-st.header("📑 Analisis 4 Sudut Pandang")
+# 8. ANALISIS PRESKRIPTIF, KESIMPULAN & REKOMENDASI (TABEL 2)
+st.subheader("4.4 Analisis Preskriptif: Framework Solusi dan Mitigasi")
+st.markdown("""
+1. **Implementasi Segera Platform Digital**: Absensi dan setoran online bagi mahasiswa magang luar kota.
+2. **Transformasi Peran Murobbi (Pendampingan Fleksibel)**: Pendampingan berbasis milestone waktu fleksibel.
+3. **Reinforcement melalui Sistem Insentif**: Sertifikat/penghargaan formal atas pencapaian hafalan.
+4. **Aktivasi Sistem Peringatan Dini (EWS)**: Intervensi dan konseling jika mahasiswa absen 2x berturut-turut.
+""")
 
-t1, t2, t3, t4 = st.tabs(["Deskriptif", "Diagnostik", "Prediktif", "Preskriptif"])
+st.header("5. Kesimpulan")
+st.warning("Program Tahfidz TI 2022 menghadapi krisis partisipasi sistemik pada level mahasiswa senior. Penurunan drastis dari 90.2% (Semester 1) ke 6.9% (Semester 5) membuktikan model pelaksanaan saat ini tidak kompatibel dengan dinamika mahasiswa. Solusi tunggal paling efektif adalah transformasi digital dan fleksibilitas kurikulum.")
 
-with t1:
-    st.write("### 4.1 Analisis Deskriptif")
-    st.write("Penurunan kinerja dimulai jauh sebelum fase kritis. Terdapat penurunan 23.5 poin persentase dari Semester 1 (90.2%) ke Semester 3 (66.7%) sebagai *early warning sign*. Titik keruntuhan (*tipping point*) terjadi pada Semester 5 di angka 6.9%. Partisipasi agregat hanya 48.9%.")
-
-with t2:
-    st.write("### 4.2 Analisis Diagnostik")
-    st.write("**A. Hambatan Struktural:** Benturan kegiatan Magang/KKP pada Semester 7+, disrupsi geografis lokasi magang luar kota, serta beban organisasi kepanitiaan besar kampus di Semester 5 (PKKMB, Wisuda, Seminar).")
-    st.write("**B. Hambatan Psikologis:** Perhatian terserap untuk skripsi dan wisuda di semester tua, membuat program tahfidz dianggap beban tambahan.")
-
-with t3:
-    st.write("### 4.3 Analisis Prediktif")
-    st.markdown("""
-    1. **Inefisiensi Sumber Daya**: Utilisasi fasilitas/Murobbi di Semester 5 hanya 7% dari alokasi anggaran penuh.
-    2. **Erosi Kualitas Lulusan**: Target hafalan diprediksi gagal dicapai oleh mayoritas mahasiswa senior.
-    3. **Proyeksi Kehadiran**: Kehadiran diprediksi terus berada di bawah 10% untuk mahasiswa senior jika tanpa intervensi.
-    """)
-
-with t4:
-    st.write("### 4.4 Analisis Preskriptif")
-    st.markdown("""
-    1. **Platform Digital**: Sistem absensi dan setoran *online* bagi mahasiswa magang luar kota.
-    2. **Pendampingan Fleksibel**: Murobbi menggunakan sistem *milestone* berbasis progres waktu fleksibel.
-    3. **Sistem Insentif**: Pemberian sertifikat/penghargaan atas pencapaian hafalan.
-    4. **Early Warning System (EWS)**: Protokol intervensi dan konseling jika mahasiswa absen 2x berturut-turut.
-    """)
-
-st.divider()
-
-# 8. KESIMPULAN & REKOMENDASI (TABLE 2)
-st.header("5. Kesimpulan & 6. Rekomendasi")
-
-st.write("### Kesimpulan")
-st.write("Program Tahfidz TI 2022 menghadapi krisis partisipasi sistemik pada mahasiswa senior. Masalah utama bukan penurunan komitmen individu, melainkan ketidakmampuan sistem mengakomodasi benturan jadwal dan kendala geografis.")
-
-st.write("### Table 2: Prioritas Rekomendasi")
-rekom_data = {
+st.header("6. Rekomendasi")
+rekom_df = pd.DataFrame({
     "No": [1, 2, 3, 4, 5],
     "Rekomendasi": ["Absensi Online", "Jadwal Fleksibel", "Peringatan Dini", "Insentif", "Kerjasama Magang"],
     "Detail": [
@@ -176,5 +207,6 @@ rekom_data = {
         "MoU dengan perusahaan untuk izin tahfidz"
     ],
     "Prioritas": ["Tinggi", "Tinggi", "Sedang", "Sedang", "Normal"]
-}
-st.dataframe(pd.DataFrame(rekom_data), use_container_width=True, hide_index=True)
+})
+st.write("#### Tabel 2: Prioritas Rekomendasi")
+st.dataframe(rekom_df, use_container_width=True, hide_index=True)
