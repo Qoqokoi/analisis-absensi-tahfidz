@@ -11,7 +11,7 @@ COLOR_TIDAK_HADIR = "#FF0000"  # Merah (Tidak Hadir / KRITIS)
 COLOR_LINE = "#0000FF"         # Biru (% Kehadiran)
 
 # 2. SIDEBAR: FITUR DINAMIS (UPLOAD FILE & FILTER)
-st.sidebar.header("⚙️ Panel Data Dinamis")
+st.sidebar.header("⚙️ Panel Data")
 uploaded_file = st.sidebar.file_uploader("Upload File Excel/CSV Absensi", type=["xlsx", "csv"])
 
 # DATASET DEFAULT (JIKA TIDAK UPLOAD FILE)
@@ -50,7 +50,7 @@ df_filtered = df[df["Semester"].isin(selected_semester)]
 
 # 3. HEADER & METRICS DINAMIS
 st.markdown("<h3 style='text-align: center; color: #1E88E5;'>UNIVERSITAS DARUSSALAM GONTOR</h3>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center;'>DASHBOARD ANALISIS KEHADIRAN TAHFIDZ (DINAMIS)</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>DASHBOARD ANALISIS KEHADIRAN TAHFIDZ</h2>", unsafe_allow_html=True)
 st.markdown("**Disusun Oleh:** Muhammad Hanan Annafi, Muhammad Raja Jibran, Akhogi Wafa, Sadam Husen, Muhammad Dafi al haq")
 
 st.divider()
